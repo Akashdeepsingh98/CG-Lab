@@ -12,10 +12,12 @@ typedef struct Matrix
 }Matrix;
 
 void InitGraph();
-void InitMatrix(Matrix *m,int r,int c, int arr[]);
+void InitMatrix(Matrix *m,int r,int c, int ini);
 void CS();
-void AcceptLines(Matrix *lines, int *nlines);
-
+void AcceptLines(Matrix *lines);
+void PrepareCodes(Matrix *lines);
+void AcceptWindow(int *xwmin,int *xwmax,int *ywmin,int *ywmax);
+void DrawWindow(int xwmin,int ywmin, int xwmax,int ywmax);
 main()
 {
 	CS();
@@ -25,29 +27,60 @@ main()
 
 void InitGraph()
 {
-	int gd=DETECT,gm;
-	initgraph(&gd,&gm,"");
+	initwindow(800,600);
 }
 
 void CS()
 {
-	int nlines;
 	Matrix lines;
-	AcceptLines(&lines,&nlines);
+	int xwmin,xwmax,ywmin,ywmax;
+	AcceptLines(&lines);
+	AcceptWindow(&xwmin,&xwmax,&ywmin,&ywmax);
+	PrepareCodes(&lines);
+	
+	InitGraph();
+	DrawWindow(xwmin,ywmin,xwmax,ywmax);
 }
 
-void AcceptLines(Matrix *lines, int *nlines)
+void AcceptWindow(int *xwmin,int *xwmax,int *ywmin,int *ywmax)
 {
-	int line_iter;
+	int height, width;
+	printf("Enter width and height of window : ");
+	scanf("%d%d",&width,&height);
+	printf("Enter top left coordinates of window : ");
+	scanf("%d %d",xwmin,ywmin);
+	*xwmax = *xwmin + width;
+	*ywmax = *ywmin + height;
+}
+
+void DrawWindow(int xwmin,int ywmin, int xwmax,int ywmax)
+{
+	setcolor(BLUE);
+	line(xwmin,ywmin,xwmax,ywmin);
+	line(xwmin,ywmin,xwmin,ywmax);
+	line(xwmax,ywmax,xwmin,ywmax);
+	line(xwmax,ywmax,xwmax,ywmin);
+	setcolor(WHITE);
+}
+
+void AcceptLines(Matrix *lines)
+{
+	int line_iter,nlines;
 	int *lineptr;
 	printf("Give number of lines : ");
-	scanf("%d",nlines);
-	for(line_iter = 0; line_iter < *nlines; line_iter++)
+	scanf("%d",&nlines);
+	InitMatrix(lines,nlines,7,0);
+	for(line_iter = 0; line_iter < nlines; line_iter++)
 	{
 		lineptr = lines->matrix[line_iter];
 		printf("Enter x1,y1,x2,y2 of line : ");
 		scanf("%d%d%d%d",&lineptr[0],&lineptr[1],&lineptr[2],&lineptr[3]);
 	}
+}
+
+void PrepareCodes(Matrix *lines)
+{
+	int nlines = lines->rows;
 }
 
 void InitMatrix(Matrix *m,int r,int c, int ini)
