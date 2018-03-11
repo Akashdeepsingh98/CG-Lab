@@ -15,7 +15,7 @@ void InitGraph();
 void InitMatrix(Matrix *m,int r,int c, int ini);
 void CS();
 void AcceptLines(Matrix *lines);
-void PrepareCodes(Matrix *lines);
+void PrepareCodes(Matrix *lines, int xwmin,int ywmin, int xwmax,int ywmax);
 void AcceptWindow(int *xwmin,int *xwmax,int *ywmin,int *ywmax);
 void DrawWindow(int xwmin,int ywmin, int xwmax,int ywmax);
 main()
@@ -36,8 +36,9 @@ void CS()
 	int xwmin,xwmax,ywmin,ywmax;
 	AcceptLines(&lines);
 	AcceptWindow(&xwmin,&xwmax,&ywmin,&ywmax);
-	PrepareCodes(&lines);
+	PrepareCodes(&lines,xwmin,xwmax,ywmin,ywmax);
 	
+	//Graphical part only
 	InitGraph();
 	DrawWindow(xwmin,ywmin,xwmax,ywmax);
 }
@@ -78,9 +79,27 @@ void AcceptLines(Matrix *lines)
 	}
 }
 
-void PrepareCodes(Matrix *lines)
+void PrepareCodes(Matrix *lines,int xwmin,int ywmin, int xwmax,int ywmax)
 {
-	int nlines = lines->rows;
+	int nlines = lines->rows, row_iter,bit_iter;
+	int x1,y1,x2,y2,*code1,*code2;
+	for(row_iter=0;row_iter<nlines;row_iter++)
+	{
+		x1=lines->matrix[row_iter][0];
+		x2=lines->matrix[row_iter][2];
+		y1=lines->matrix[row_iter][1];
+		y2=lines->matrix[row_iter][3];
+		code1 = &lines->matrix[row_iter][4];
+		code2 = &lines->matrix[row_iter][5];
+		*code1 = x1<xwmin?1:0;
+		*code1 = x1>xwmax?1:0 + 10**code1;
+		*code1 = y1<ywmin?1:0 + 10**code1;
+		*code1 = y1>ywmax?1:0 + 10**code1;
+		*code2 = x2<xwmin?1:0;
+		*code2 = x2>xwmax?1:0 + 10**code2;
+		*code2 = y2<ywmin?1:0 + 10**code2;
+		*code2 = y2>ywmax?1:0 + 10**code2;
+	}
 }
 
 void InitMatrix(Matrix *m,int r,int c, int ini)
